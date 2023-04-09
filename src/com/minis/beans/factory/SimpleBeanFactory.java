@@ -3,10 +3,6 @@ package com.minis.beans.factory;
 import com.minis.beans.BeanDefinition;
 import com.minis.beans.BeansException;
 import com.minis.beans.DefaultSingletonBeanRegistry;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
