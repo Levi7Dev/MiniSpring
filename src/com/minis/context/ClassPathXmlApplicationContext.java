@@ -1,5 +1,7 @@
-package com.minis.beans;
+package com.minis.context;
 
+import com.minis.beans.BeanDefinition;
+import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.SimpleBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
@@ -7,13 +9,15 @@ import com.minis.core.ClassPathXmlResource;
 import com.minis.core.Resource;
 
 
-public class ClassPathXmlApplicationContext implements BeanFactory {
+public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher{
     SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
+        //获取配置文件信息，里面包含了各种元素
         Resource resource = new ClassPathXmlResource(fileName);
         SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        //将资源中的bean定义信息添加到beanFactory中，beanFactory中只包含bean的定义信息
         reader.loadBeanDefinitions(resource);
         this.beanFactory = beanFactory;
     }
@@ -24,9 +28,29 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
         return this.beanFactory.getBean(beanName);
     }
 
+    //这个方法可能并不需要，直接通过registerBean来完成了
+    public void registerBeanDefinition(String name, BeanDefinition beanDefinition) {
+        this.beanFactory.registerBeanDefinition(name, beanDefinition);
+    }
+
     @Override
     public void registerBean(String beanName, Object obj) {
         this.beanFactory.registerBean(beanName, obj);
+    }
+
+    @Override
+    public boolean isSingleton(String name) {
+        return false;
+    }
+
+    @Override
+    public boolean isPrototype(String name) {
+        return false;
+    }
+
+    @Override
+    public Class<?> getType(String name) {
+        return null;
     }
 
     @Override
@@ -34,9 +58,10 @@ public class ClassPathXmlApplicationContext implements BeanFactory {
         return this.beanFactory.containsBean(name);
     }
 
+    //ApplicationEventPublisher中的方法
+    @Override
+    public void publishEvent(ApplicationEvent event) {
 
-    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-        this.beanFactory.registerBeanDefinition(beanDefinition);
     }
 }
 

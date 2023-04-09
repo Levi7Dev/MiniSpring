@@ -18,7 +18,8 @@ public class XmlBeanDefinitionReader {
             String beanID = element.attributeValue("id");
             String beanClassName = element.attributeValue("class");
             BeanDefinition beanDefinition = new BeanDefinition(beanID, beanClassName);
-            this.simpleBeanFactory.registerBeanDefinition(beanDefinition);
+            //这个beanID对应的就是bean的name
+            this.simpleBeanFactory.registerBeanDefinition(beanID, beanDefinition);
         }
     }
 }
