@@ -12,12 +12,15 @@ import java.util.concurrent.ConcurrentHashMap;
 
 /***
  * SimpleBeanFactory 实现了 BeanDefinitionRegistry，这样 SimpleBeanFactory 既是一个工厂同时也是一个仓库
+ * SimpleBeanFactory拥有三个功能：
+ *  1、单例bean的管理：该功能由SingletonBeanRegistry接口负责，DefaultSingletonBeanRegistry做了功能的具体实现。
+ *  2、bean定义信息的管理：该功能由BeanDefinitionRegistry接口负责，实现对bean定义的增删等功能。
+ *  3、工厂对外暴露的接口：该功能由BeanFactory接口负责，对外暴露一些方法，使得外部可以操作bean实例，比如有获取bean实例的方法。
+ *
+ * 外部程序只需要给SimpleBeanFactory类提供bean定义信息，具体bean的实例化由本类内部完成
  */
-public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
-    //private List<BeanDefinition> beanDefinitions = new ArrayList<>();
-    //private List<String> beanNames = new ArrayList<>();
-    //private Map<String, Object> singletons = new HashMap<>();
 
+public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements BeanFactory, BeanDefinitionRegistry {
     private Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
     private List<String> beanDefinitionNames = new ArrayList<>();
 
@@ -39,28 +42,18 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
             }
             try {
                 singleton = Class.forName(beanDefinition.getClassName()).newInstance();
-                //实例化后注册到容器中
-                //调用BeanFactory中的方法，进而调用父类注册单例bean的方法
-                this.registerBean(beanName, singleton);
+                //实例化后注册到单例bean容器，DefaultSingletonBeanRegistry中的方法
+                this.registerSingleton(beanName, singleton);
             } catch (Exception e) {}
         }
         return singleton;
     }
-
-//    public void registerBeanDefinition(BeanDefinition beanDefinition) {
-//        this.beanDefinitionMap.put(beanDefinition.getId(), beanDefinition);
-//    }
 
     public Boolean containsBean(String beanName) {
         return containsSingleton(beanName);
     }
 
     //以下几个是BeanFactory中的方法
-    @Override
-    public void registerBean(String beanName, Object obj) {
-        this.registerSingleton(beanName, obj);
-    }
-
     @Override
     public boolean isSingleton(String name) {
         return this.beanDefinitionMap.get(name).isSingleton();
@@ -96,6 +89,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         this.beanDefinitionMap.remove(name);
         this.beanDefinitionNames.remove(name);
         //DefaultSingletonBeanRegistry中的方法
+        //bean的定义删除后对应的bean实例也应该删除
         this.removeSingleton(name);
     }
 

@@ -28,16 +28,6 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
         return this.beanFactory.getBean(beanName);
     }
 
-    //这个方法可能并不需要，直接通过registerBean来完成了
-    public void registerBeanDefinition(String name, BeanDefinition beanDefinition) {
-        this.beanFactory.registerBeanDefinition(name, beanDefinition);
-    }
-
-    @Override
-    public void registerBean(String beanName, Object obj) {
-        this.beanFactory.registerBean(beanName, obj);
-    }
-
     @Override
     public boolean isSingleton(String name) {
         return false;

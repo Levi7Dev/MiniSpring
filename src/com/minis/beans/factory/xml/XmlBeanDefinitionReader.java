@@ -1,8 +1,6 @@
 package com.minis.beans.factory.xml;
 
 import com.minis.beans.BeanDefinition;
-import com.minis.beans.SingletonBeanRegistry;
-import com.minis.beans.factory.BeanFactory;
 import com.minis.beans.factory.SimpleBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;

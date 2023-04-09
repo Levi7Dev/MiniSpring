@@ -5,6 +5,7 @@ public class BeanDefinition {
     String SCOPE_SINGLETON = "singleton";
     String SCOPE_PROTOTYPE = "prototype";
 
+    //默认是非懒加载
     private boolean lazyInit = false;
     private String[] dependsOn;
 
