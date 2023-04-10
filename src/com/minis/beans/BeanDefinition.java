@@ -7,9 +7,12 @@ public class BeanDefinition {
 
     //默认是非懒加载
     private boolean lazyInit = false;
+    //依赖哪些引用，引用的其他 Bean
     private String[] dependsOn;
 
+    //构造函数注入
     private ArgumentValues constructorArgumentValues;
+    //setter注入
     private PropertyValues propertyValues;
 
     private String initMethodName;
@@ -76,7 +79,7 @@ public class BeanDefinition {
     }
 
     public void setPropertyValues(PropertyValues propertyValues) {
-        this.propertyValues = propertyValues;
+        this.propertyValues = (propertyValues != null ? propertyValues : new PropertyValues());
     }
 
     public String getInitMethodName() {

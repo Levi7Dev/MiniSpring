@@ -10,9 +10,14 @@ import com.minis.core.Resource;
 
 
 public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher{
+
     SimpleBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
+        this(fileName, true);
+    }
+
+    public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         //获取配置文件信息，里面包含了各种元素
         Resource resource = new ClassPathXmlResource(fileName);
         SimpleBeanFactory beanFactory = new SimpleBeanFactory();
@@ -20,6 +25,9 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
         //将资源中的bean定义信息添加到beanFactory中，beanFactory中只包含bean的定义信息
         reader.loadBeanDefinitions(resource);
         this.beanFactory = beanFactory;
+        if (!isRefresh) {
+            this.beanFactory.refresh();
+        }
     }
 
     //对外暴露的方法，让外部程序从容器中获取Bean实例，会逐步演化

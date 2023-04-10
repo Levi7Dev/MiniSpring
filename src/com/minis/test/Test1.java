@@ -6,7 +6,7 @@ import com.minis.beans.BeansException;
 public class Test1 {
     public static void main(String[] args) throws BeansException {
         //配置文件应放在resources目录下，（新建一个resources——>右键Mark directory as——>Resources root）
-        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans.xml");
+        ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans2.xml");
         AService aservice1 = (AService) ctx.getBean("aservice");
         aservice1.sayHello();
 
