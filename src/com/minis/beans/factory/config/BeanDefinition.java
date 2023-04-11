@@ -7,8 +7,7 @@ public class BeanDefinition {
     String SCOPE_SINGLETON = "singleton";
     String SCOPE_PROTOTYPE = "prototype";
 
-    //默认是非懒加载
-    private boolean lazyInit = false;
+    private boolean lazyInit = true;
     //依赖哪些引用，引用的其他 Bean
     private String[] dependsOn;
 
@@ -73,7 +72,8 @@ public class BeanDefinition {
     }
 
     public void setConstructorArgumentValues(ConstructorArgumentValues constructorArgumentValues) {
-        this.constructorArgumentValues = constructorArgumentValues;
+        this.constructorArgumentValues =
+                (constructorArgumentValues != null ? constructorArgumentValues : new ConstructorArgumentValues());
     }
 
     public PropertyValues getPropertyValues() {

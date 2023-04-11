@@ -4,6 +4,7 @@ import com.minis.beans.*;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
 import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.beans.factory.support.AbstractBeanFactory;
 import com.minis.beans.factory.support.SimpleBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;
@@ -13,10 +14,10 @@ import java.util.List;
 
 public class XmlBeanDefinitionReader {
 
-    SimpleBeanFactory simpleBeanFactory;
+    AbstractBeanFactory bf;
 
-    public XmlBeanDefinitionReader(SimpleBeanFactory simpleBeanFactory) {
-        this.simpleBeanFactory = simpleBeanFactory;
+    public XmlBeanDefinitionReader(AbstractBeanFactory bf) {
+        this.bf =  bf;
     }
 
     public void loadBeanDefinitions(Resource resource) {
@@ -24,6 +25,7 @@ public class XmlBeanDefinitionReader {
             Element element = (Element) resource.next();
             String beanID = element.attributeValue("id");
             String beanClassName = element.attributeValue("class");
+            String initMethodName = element.attributeValue("init-method");
             BeanDefinition beanDefinition = new BeanDefinition(beanID, beanClassName);
 
             //解析 <property> 和 <constructor-arg> 两个标签
@@ -56,6 +58,7 @@ public class XmlBeanDefinitionReader {
             String[] refArray = refs.toArray(new String[0]);
             //dependsOn数组存放本类需要的引用（类）
             beanDefinition.setDependsOn(refArray);
+            beanDefinition.setInitMethodName(initMethodName);
 
             //处理构造器参数，解析<constructor-arg>
             List<Element> constructorElements = element.elements("constructor-arg");
@@ -69,7 +72,7 @@ public class XmlBeanDefinitionReader {
             beanDefinition.setConstructorArgumentValues(AVS);
 
             //这个beanID对应的就是bean的name
-            this.simpleBeanFactory.registerBeanDefinition(beanID, beanDefinition);
+            this.bf.registerBeanDefinition(beanID, beanDefinition);
         }
     }
 }

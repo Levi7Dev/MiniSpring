@@ -2,6 +2,8 @@ package com.minis.context;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
+import com.minis.beans.factory.config.AutowireCapableBeanFactory;
 import com.minis.beans.factory.support.SimpleBeanFactory;
 import com.minis.beans.factory.xml.XmlBeanDefinitionReader;
 import com.minis.core.ClassPathXmlResource;
@@ -10,7 +12,8 @@ import com.minis.core.Resource;
 
 public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationEventPublisher{
 
-    SimpleBeanFactory beanFactory;
+    //SimpleBeanFactory beanFactory;
+    AutowireCapableBeanFactory beanFactory;
 
     public ClassPathXmlApplicationContext(String fileName) {
         this(fileName, true);
@@ -19,13 +22,19 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     public ClassPathXmlApplicationContext(String fileName, boolean isRefresh) {
         //获取配置文件信息，里面包含了各种元素
         Resource resource = new ClassPathXmlResource(fileName);
-        SimpleBeanFactory beanFactory = new SimpleBeanFactory();
-        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(beanFactory);
+        //SimpleBeanFactory beanFactory = new SimpleBeanFactory();
+        AutowireCapableBeanFactory bf = new AutowireCapableBeanFactory();
+        XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(bf);
         //将资源中的bean定义信息添加到beanFactory中，beanFactory中只包含bean的定义信息
         reader.loadBeanDefinitions(resource);
-        this.beanFactory = beanFactory;
-        if (!isRefresh) {
-            this.beanFactory.refresh();
+        this.beanFactory = bf;
+        if (isRefresh) {
+            //this.beanFactory.refresh();
+            try {
+                refresh();
+            } catch (BeansException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -34,6 +43,20 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
         //根据bean的名字获取实例
         return this.beanFactory.getBean(beanName);
     }
+
+    public void refresh() throws BeansException, IllegalStateException {
+        registerBeanPostProcessors(this.beanFactory);
+        onRefresh();
+    }
+
+    private void registerBeanPostProcessors(AutowireCapableBeanFactory bf) {
+        bf.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
+    }
+
+    private void onRefresh() {
+        this.beanFactory.refresh();
+    }
+
 
     @Override
     public boolean isSingleton(String name) {
