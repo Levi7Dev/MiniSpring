@@ -1,7 +1,10 @@
 package com.minis.beans.factory.xml;
 
 import com.minis.beans.*;
-import com.minis.beans.factory.SimpleBeanFactory;
+import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
+import com.minis.beans.factory.support.SimpleBeanFactory;
 import com.minis.core.Resource;
 import org.dom4j.Element;
 
@@ -9,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class XmlBeanDefinitionReader {
+
     SimpleBeanFactory simpleBeanFactory;
 
     public XmlBeanDefinitionReader(SimpleBeanFactory simpleBeanFactory) {
@@ -55,12 +59,12 @@ public class XmlBeanDefinitionReader {
 
             //处理构造器参数，解析<constructor-arg>
             List<Element> constructorElements = element.elements("constructor-arg");
-            ArgumentValues AVS = new ArgumentValues();
+            ConstructorArgumentValues AVS = new ConstructorArgumentValues();
             for (Element e : constructorElements) {
                 String aType = e.attributeValue("type");
                 String aName = e.attributeValue("name");
                 String aValue = e.attributeValue("value");
-                AVS.addArgumentValue(new ArgumentValue(aType, aName, aValue));
+                AVS.addArgumentValue(new ConstructorArgumentValue(aType, aName, aValue));
             }
             beanDefinition.setConstructorArgumentValues(AVS);
 

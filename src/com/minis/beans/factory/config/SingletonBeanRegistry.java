@@ -1,4 +1,4 @@
-package com.minis.beans;
+package com.minis.beans.factory.config;
 
 public interface SingletonBeanRegistry {
     //单例bean的注册，获取，判断是否存在，获取所有的单例bean

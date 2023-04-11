@@ -1,6 +1,10 @@
-package com.minis.beans.factory;
+package com.minis.beans.factory.support;
 
 import com.minis.beans.*;
+import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.config.BeanDefinition;
+import com.minis.beans.factory.config.ConstructorArgumentValue;
+import com.minis.beans.factory.config.ConstructorArgumentValues;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
@@ -86,28 +90,29 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
         Object obj = null;
         Constructor<?> con = null;
         try {
+            //找到指定的类，根据
             clz = Class.forName(bd.getClassName());
             //处理构造器参数
-            ArgumentValues argumentValues = bd.getConstructorArgumentValues();
-            if (!argumentValues.isEmpty()) {
-                Class<?>[] paramTypes = new Class<?>[argumentValues.getArgumentCount()];
-                Object[] paramValues = new Object[argumentValues.getArgumentCount()];
-                for (int i = 0; i < argumentValues.getArgumentCount(); i++) {
-                    ArgumentValue argumentValue = argumentValues.getIndexedArgumentValue(i);
+            ConstructorArgumentValues constructorArgumentValues = bd.getConstructorArgumentValues();
+            if (!constructorArgumentValues.isEmpty()) {
+                Class<?>[] paramTypes = new Class<?>[constructorArgumentValues.getArgumentCount()];
+                Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
+                for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {
+                    ConstructorArgumentValue constructorArgumentValue = constructorArgumentValues.getIndexedArgumentValue(i);
                     //System.out.println("++++++:" + argumentValue.getType());
-                    if ("String".equals(argumentValue.getType()) || "java.lang.String".equals(argumentValue.getType())) {
+                    if ("String".equals(constructorArgumentValue.getType()) || "java.lang.String".equals(constructorArgumentValue.getType())) {
                         paramTypes[i] = String.class;
-                        paramValues[i] = argumentValue.getValue();
-                    } else if ("Integer".equals(argumentValue.getType()) || "java.lang.Integer".equals(argumentValue.getType())) {
+                        paramValues[i] = constructorArgumentValue.getValue();
+                    } else if ("Integer".equals(constructorArgumentValue.getType()) || "java.lang.Integer".equals(constructorArgumentValue.getType())) {
                         paramTypes[i] = Integer.class;
-                        paramValues[i] = Integer.valueOf((String) argumentValue.getValue());
-                    } else if ("int".equals(argumentValue.getType())) {
+                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
+                    } else if ("int".equals(constructorArgumentValue.getType())) {
                         paramTypes[i] = int.class;
-                        paramValues[i] = Integer.valueOf((String) argumentValue.getValue()).intValue();
+                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue()).intValue();
                     } else {
                         //其余基本数据类型省略，默认为string
                         paramTypes[i] = String.class;
-                        paramValues[i] = argumentValue.getValue();
+                        paramValues[i] = constructorArgumentValue.getValue();
                     }
                 }
                 // 根据参数类型实例化
@@ -126,7 +131,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     e.printStackTrace();
                 }
             } else {
-                //构造器参数为空则直接实例化
+                //构造器参数为空则直接使用无参构造函数实例化，对应的类需要实现无参构造器
                 obj = clz.newInstance();
             }
 
@@ -145,6 +150,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
     //setter注入，处理属性
     private void handleProperties(BeanDefinition bd, Class<?> clz, Object obj) {
         System.out.println("handle properties for bean : " + bd.getId());
+        System.out.println("----------------------------");
 
         PropertyValues propertyValues = bd.getPropertyValues();
         if (!propertyValues.isEmpty()) {
@@ -168,8 +174,8 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     } else {
                         paramTypes[0] = String.class;
                     }
+                    //不是引用存放实际的值
                     paramValues[0] = pValue;
-
                 } else {
                     //是引用，创建独立的bean
                     try {
@@ -179,6 +185,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                     }
                     //调用getBean创建ref的bean实例
                     try {
+                        //是引用，存放对应的bean实例
                         paramValues[0] = getBean((String)pValue);
                     } catch (BeansException e) {
                         e.printStackTrace();
@@ -189,7 +196,7 @@ public class SimpleBeanFactory extends DefaultSingletonBeanRegistry implements B
                 String methodName = "set" + pName.substring(0, 1).toUpperCase() + pName.substring(1);
                 Method method = null;
                 try {
-                    //通过相应的类文件拿到对应的方法
+                    //通过相应的类文件拿到对应的setter方法
                     method = clz.getMethod(methodName, paramTypes);
                 } catch (NoSuchMethodException e) {
                     e.printStackTrace();

@@ -9,6 +9,13 @@ public class Test1 {
         ClassPathXmlApplicationContext ctx = new ClassPathXmlApplicationContext("beans2.xml");
         AService aservice1 = (AService) ctx.getBean("aservice");
         aservice1.sayHello();
+    }
+}
+
+
+
+
+
 
 //        //重构后的代码
 //        //获取到配置文件的bean信息
@@ -22,5 +29,3 @@ public class Test1 {
 //        //最终的bean是从beanFactory中获取
 //        AService aservice = (AService)beanFactory.getBean("aservice");
 //        aservice.sayHello();
-    }
-}

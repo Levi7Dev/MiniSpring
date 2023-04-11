@@ -1,4 +1,6 @@
-package com.minis.beans;
+package com.minis.beans.factory.support;
+
+import com.minis.beans.factory.config.BeanDefinition;
 
 /***
  * 集中管理BeanDefinition，相当于一个BeanDefinition仓库，
