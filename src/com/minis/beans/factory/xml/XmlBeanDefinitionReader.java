@@ -41,6 +41,7 @@ public class XmlBeanDefinitionReader {
                 String pRef = e.attributeValue("ref");
                 //用于存放pValue或者pRef值，具体取决于哪个存在
                 String pV = "";
+                //如果使用注解注入引用，那么xml文文件中不会出现ref字段，所以仅仅只会实例化该bean，
                 boolean isRef = false;
                 //如果是引用，在xml文件中就不会有value字段，value值不为空则说明不是引用类型
                 if (pValue != null && !pValue.equals("")) {

@@ -25,12 +25,13 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
         //SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         AutowireCapableBeanFactory bf = new AutowireCapableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(bf);
-        //将资源中的bean定义信息添加到beanFactory中，beanFactory中只包含bean的定义信息
+        //将xml文件中的bean定义信息添加到beanFactory中
         reader.loadBeanDefinitions(resource);
         this.beanFactory = bf;
         if (isRefresh) {
-            //this.beanFactory.refresh();
             try {
+                //此时beanFactory中已经包含了从xml文件中读取的bean定义信息
+                //核心方法，对于实现了 BeanPostProcessor 接口的 Bean，Spring 会将其注册到 beanPostProcessors 列表中
                 refresh();
             } catch (BeansException e) {
                 e.printStackTrace();
@@ -45,15 +46,22 @@ public class ClassPathXmlApplicationContext implements BeanFactory, ApplicationE
     }
 
     public void refresh() throws BeansException, IllegalStateException {
+        //本类方法
         registerBeanPostProcessors(this.beanFactory);
         onRefresh();
     }
 
     private void registerBeanPostProcessors(AutowireCapableBeanFactory bf) {
+        //为了获取spring中管理bean，会new ClassPathXmlApplicationContext()，然后再创建BeanFactory，
+        //需要把这个工厂注入到注解处理器中，bean定义信息也是在同一个bean工厂中
+        //达到了同一个bean工厂，既有bean的定义信息，也为该工厂注册了注解处理器，
+        //那么该工厂同时拥有了从xml文件中构造bean实例的能力和从注解中构造bean实例的能力
+        //为该工厂注册一个Autowired注解注解处理器，
         bf.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
     }
 
     private void onRefresh() {
+        //bean工厂中已经注册了bean定义信息，调用工厂中的refresh函数会为每个bena实例并初始化
         this.beanFactory.refresh();
     }
 
