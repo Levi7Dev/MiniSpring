@@ -14,7 +14,6 @@ public class BaseService {
 
     public void sayHello() {
         System.out.println("Base Service says hello");
-
     }
 
     public BaseBaseService getBbs() {
