@@ -311,6 +311,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         return this.beanDefinitionMap.get(name).getClass();
     }
 
+    //AbstractAutowireCapableBeanFactory类实现方法
     //bean初始化之前执行
     abstract public Object applyBeanPostProcessorsBeforeInitialization(Object existingBean, String beanName) throws BeansException;
     //bean初始化之后执行

@@ -32,6 +32,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         Resource resource = new ClassPathXmlResource(fileName);
         //SimpleBeanFactory beanFactory = new SimpleBeanFactory();
         //AbstractAutowireCapableBeanFactory bf = new AbstractAutowireCapableBeanFactory();
+        //DefaultListableBeanFactory工厂实现了所有工厂接口的方法，是bean工厂的默认实现
         DefaultListableBeanFactory bf = new DefaultListableBeanFactory();
         XmlBeanDefinitionReader reader = new XmlBeanDefinitionReader(bf);
         //将xml文件中的bean定义信息添加到beanFactory中
@@ -72,6 +73,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         this.setApplicationEventPublisher(aep);
     }
 
+    //refresh函数中调用
     @Override
     void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
 
@@ -82,7 +84,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         //为了获取spring中管理bean，会new ClassPathXmlApplicationContext()，然后再创建BeanFactory，
         //需要把这个工厂注入到注解处理器中，bean定义信息也是在同一个bean工厂中
         //达到了同一个bean工厂，既有bean的定义信息，也为该工厂注册了注解处理器，
-        //那么该工厂同时拥有了从xml文件中构造bean实例的能力和从注解中构造bean实例的能力
+        //那么该工厂同时拥有了从xml文件中构造bean实例的能力和从注解中注入bean实例的能力
         //为该工厂注册一个Autowired注解注解处理器，
         this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
     }
