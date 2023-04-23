@@ -18,11 +18,12 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class DispatcherServlet extends HttpServlet {
-    //分别记录 URL 对应的 MappingValue 对象、对应的类和对应的方法。
-    private Map<String, MappingValue> mappingValues;
-    private Map<String, Class<?>> mappingClz = new HashMap<>();
-    private Map<String, Object> mappingObjs = new HashMap<>();
+    //分别记录 URL 对应的 MappingValue 对象、对应的类和对应的实例。
+//    private Map<String, MappingValue> mappingValues;
+//    private Map<String, Class<?>> mappingClz = new HashMap<>();
 
+    //url名称与对象的映射关系
+    private Map<String, Object> mappingObjs = new HashMap<>();
     //需要扫描的package列表
     private List<String> packageNames = new ArrayList<>();
     //存储controller的名称与对象的映射
@@ -36,6 +37,19 @@ public class DispatcherServlet extends HttpServlet {
     //url与方法的映射
     private Map<String,Method> mappingMethods = new HashMap<>();
 
+    /***
+     * 0、扫描的文件需要web.xml文件中声明
+     * 1、扫描servlet.xml文件，获取所有base-package的值
+     * 2、根据base-package的值获取这些包下的所有类名（包名+类名的全路径），存入List controllerNames
+     * 3、根据controllerNames全类名创建对应的类，存入Map<controllerName,Class<?>> controllerClasses
+     * 4、根据对应的类创建对应的对象，存入Map<controllerName,Object> controllerObjs
+     * 5、扫描所有controllerNames，是否存在被@RequestMapping注解的方法，然后拿到方法上注解的值（url）
+     * 6、将url与方法名的映射存入Map<url,Method> mappingMethods，将url与对象映射存入Map<url, Object> mappingObjs
+     * 7、在doGet方法中根据传入的url，拿到对应的对象，以及对应的方法（从第六步中的两个map中获取）
+     * 8、result = method.invoke(obj);调用该方法，拿到返回值，传给view。
+     */
+
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
@@ -54,12 +68,10 @@ public class DispatcherServlet extends HttpServlet {
         Refresh();
     }
 
-    //对所有的mappingValues中注册的类进行实例化，默认构造函数
     protected void Refresh() {
         initController();
         initMapping();
     }
-
 
     protected void initController() {
         //扫描包，获取所有类名
@@ -70,8 +82,7 @@ public class DispatcherServlet extends HttpServlet {
             try {
                 clz = Class.forName(controllerName); //加载类
                 this.controllerClasses.put(controllerName, clz);
-            } catch (Exception e) {
-            }
+            } catch (Exception e) { }
             try {
                 obj = clz.newInstance(); //实例化bean
                 this.controllerObjs.put(controllerName, obj);
@@ -134,10 +145,12 @@ public class DispatcherServlet extends HttpServlet {
         }
     }
 
-
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String sPath = request.getServletPath();
+        System.out.println("ServletPath:" + sPath); //ServletPath:/test  就是浏览器输入的url路径
         if (!this.urlMappingNames.contains(sPath)) {
+            response.getWriter().append("no such url!");
             return;
         }
         Object obj = null;
@@ -146,8 +159,8 @@ public class DispatcherServlet extends HttpServlet {
             Method method = this.mappingMethods.get(sPath);
             obj = this.mappingObjs.get(sPath);
             objResult = method.invoke(obj);
-        } catch (Exception e) {
-        }
+        } catch (Exception e) { }
+
         response.getWriter().append(objResult.toString());
     }
 
