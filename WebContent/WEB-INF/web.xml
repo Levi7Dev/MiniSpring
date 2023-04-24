@@ -2,6 +2,26 @@
 <web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xmlns:web="http://xmlns.jcp.org/xml/ns/javaee"
          xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID">
+
+    <!--
+    1. 在启动 Web 项目时，Tomcat 会读取 web.xml 中的 context-param 节点，获取这个 Web 应用的全局参数。
+    2. tomcat 创建一个 ServletContext 实例，是全局有效的，将 context-param 的参数转换为键值对，存储在 ServletContext 里。
+    3. 创建 listener 节点中定义的监听类的实例。
+    4. 当 Tomcat 完成启动，也就是listener类中 contextInitialized 方法完成后，再对 Filter 过滤器进行初始化。
+    5. servlet初始化（如下servlet节点），有一个参数 load-on-startup，它为正数的值越小优先级越高，会自动启动，
+       如果为负数或未指定这个参数，会在 servlet 被调用时再进行初始化。
+       init-param 是一个 servlet 整个范围之内有效的参数。
+    -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>applicationContext.xml</param-value>
+    </context-param>
+    <listener>
+        <listener-class>
+            com.minis.web.ContextLoaderListener
+        </listener-class>
+    </listener>
+
     <servlet>
         <servlet-name>minisMVC</servlet-name>
         <servlet-class>com.minis.web.DispatcherServlet</servlet-class>

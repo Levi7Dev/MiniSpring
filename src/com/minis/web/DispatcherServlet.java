@@ -18,9 +18,14 @@ import javax.servlet.http.HttpServletResponse;
 
 
 public class DispatcherServlet extends HttpServlet {
-    //分别记录 URL 对应的 MappingValue 对象、对应的类和对应的实例。
+//    //分别记录 URL 对应的 MappingValue 对象、对应的类和对应的实例。
 //    private Map<String, MappingValue> mappingValues;
 //    private Map<String, Class<?>> mappingClz = new HashMap<>();
+
+    private static final long serialVersionUID = 1L;
+
+    private WebApplicationContext webApplicationContext;
+    private String sContextConfigLocation;
 
     //url名称与对象的映射关系
     private Map<String, Object> mappingObjs = new HashMap<>();
@@ -53,12 +58,26 @@ public class DispatcherServlet extends HttpServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
+        /**
+         * 首先在 Servlet 初始化的时候，从 sevletContext 里获取属性，
+         * 拿到 Listener 启动的时候注册好的 WebApplicationContext，
+         * 然后拿到 Servlet 配置参数 contextConfigLocation，
+         * 这个参数代表的是配置文件路径，这个时候是我们的 MVC 用到的配置文件，如 minisMVC-servlet.xml，
+         * 之后再扫描路径下的包，调用 refresh() 方法加载 Bean。
+         * 这样，DispatcherServlet 也就初始化完毕了。
+         */
+
+        //webApplicationContext可以通过getBean方法获取到applicationContext.xml中定义的bean（因为继承了ioc容器类ClassPathXmlApplicationContext）
+        //如果需要用到这些bean可以通过这种方法获取
+        this.webApplicationContext =
+                (WebApplicationContext) this.getServletContext().getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE);
+
         //获取到minisMVC-servlet.xml文件路径
-        String contextConfigLocation = config.getInitParameter("contextConfigLocation");
+        sContextConfigLocation = config.getInitParameter("contextConfigLocation");
         URL xmlPath = null;
 
         try {
-            xmlPath = this.getServletContext().getResource(contextConfigLocation);
+            xmlPath = this.getServletContext().getResource(sContextConfigLocation);
         } catch (MalformedURLException e) {
             e.printStackTrace();
         }
@@ -124,6 +143,7 @@ public class DispatcherServlet extends HttpServlet {
     }
 
     protected void initMapping() {
+        //会扫描报包下的所有controllerNames，比较耗时，所以尽量精确化地声明需要扫描的类
         for (String controllerName : this.controllerNames) {
             Class<?> clazz = this.controllerClasses.get(controllerName);
             Object obj = this.controllerObjs.get(controllerName);
@@ -134,7 +154,7 @@ public class DispatcherServlet extends HttpServlet {
                     boolean isRequestMapping = method.isAnnotationPresent(RequestMapping.class);
                     if (isRequestMapping) { //有RequestMapping注解
                         String methodName = method.getName();
-                        //建立方法名和URL的映射
+                        //建立方法名和URL的映射，拿到方法上注解传入的值
                         String urlMapping = method.getAnnotation(RequestMapping.class).value();
                         this.urlMappingNames.add(urlMapping);
                         this.mappingObjs.put(urlMapping, obj);

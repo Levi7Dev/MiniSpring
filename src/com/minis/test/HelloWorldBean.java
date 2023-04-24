@@ -10,10 +10,12 @@ public class HelloWorldBean {
         return "hello world for doTest!";
     }
 
+    @RequestMapping("/get")
     public String doGet() {
         return "hello world for doGet!";
     }
 
+    @RequestMapping("/post")
     public String doPost() {
         return "hello world for doPost!";
     }

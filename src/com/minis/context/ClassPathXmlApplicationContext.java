@@ -89,15 +89,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         this.beanFactory.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
     }
 
-//    private void registerBeanPostProcessors(AbstractAutowireCapableBeanFactory bf) {
-//        //为了获取spring中管理bean，会new ClassPathXmlApplicationContext()，然后再创建BeanFactory，
-//        //需要把这个工厂注入到注解处理器中，bean定义信息也是在同一个bean工厂中
-//        //达到了同一个bean工厂，既有bean的定义信息，也为该工厂注册了注解处理器，
-//        //那么该工厂同时拥有了从xml文件中构造bean实例的能力和从注解中构造bean实例的能力
-//        //为该工厂注册一个Autowired注解注解处理器，
-//        bf.addBeanPostProcessor(new AutowiredAnnotationBeanPostProcessor());
-//    }
-
+    //开始将每个bean实例化和初始化，通过getBean方法实现
     @Override
     public void onRefresh() {
         //bean工厂中已经注册了bean定义信息，调用工厂中的refresh函数会为每个bena实例并初始化
