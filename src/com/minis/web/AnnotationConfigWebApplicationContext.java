@@ -6,6 +6,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import javax.servlet.ServletContext;
+import javax.servlet.ServletOutputStream;
+
 import com.minis.beans.factory.annotation.AutowiredAnnotationBeanPostProcessor;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.BeanFactoryPostProcessor;
@@ -86,6 +88,7 @@ public class AnnotationConfigWebApplicationContext extends AbstractApplicationCo
                 scanPackage(packageName + "." + file.getName());
             } else {
                 String controllerName = packageName + "." + file.getName().replace(".class", "");
+                //System.out.println("controllerName:" + controllerName);
                 tempControllerNames.add(controllerName);
             }
         }

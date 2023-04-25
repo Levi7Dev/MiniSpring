@@ -133,44 +133,48 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             //System.out.println("-------:" + clz.toString());
             //处理构造器参数
             ConstructorArgumentValues constructorArgumentValues = bd.getConstructorArgumentValues();
-            if (! constructorArgumentValues.isEmpty()) {
-                Class<?>[] paramTypes = new Class<?>[constructorArgumentValues.getArgumentCount()];
-                Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
-                for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {
-                    ConstructorArgumentValue constructorArgumentValue = constructorArgumentValues.getIndexedArgumentValue(i);
-                    //System.out.println("++++++:" + argumentValue.getType());
-                    if ("String".equals(constructorArgumentValue.getType()) || "java.lang.String".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = String.class;
-                        paramValues[i] = constructorArgumentValue.getValue();
-                    } else if ("Integer".equals(constructorArgumentValue.getType()) || "java.lang.Integer".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = Integer.class;
-                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
-                    } else if ("int".equals(constructorArgumentValue.getType())) {
-                        paramTypes[i] = int.class;
-                        paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue()).intValue();
-                    } else {
-                        //其余基本数据类型省略，默认为string
-                        paramTypes[i] = String.class;
-                        paramValues[i] = constructorArgumentValue.getValue();
+            if (constructorArgumentValues != null) {
+                if (!constructorArgumentValues.isEmpty()) {
+                    Class<?>[] paramTypes = new Class<?>[constructorArgumentValues.getArgumentCount()];
+                    Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
+                    for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {
+                        ConstructorArgumentValue constructorArgumentValue = constructorArgumentValues.getIndexedArgumentValue(i);
+                        //System.out.println("++++++:" + argumentValue.getType());
+                        if ("String".equals(constructorArgumentValue.getType()) || "java.lang.String".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = String.class;
+                            paramValues[i] = constructorArgumentValue.getValue();
+                        } else if ("Integer".equals(constructorArgumentValue.getType()) || "java.lang.Integer".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = Integer.class;
+                            paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue());
+                        } else if ("int".equals(constructorArgumentValue.getType())) {
+                            paramTypes[i] = int.class;
+                            paramValues[i] = Integer.valueOf((String) constructorArgumentValue.getValue()).intValue();
+                        } else {
+                            //其余基本数据类型省略，默认为string
+                            paramTypes[i] = String.class;
+                            paramValues[i] = constructorArgumentValue.getValue();
+                        }
                     }
-                }
-                // 根据参数类型实例化
-                try {
-                    //传入构造函数的参数类型，注意对应的bean类需要有对应的构造函数
-                    con = clz.getConstructor(paramTypes);
-                    //传入具体参数
-                    obj = con.newInstance(paramValues);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                } catch (IllegalArgumentException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    // 根据参数类型实例化
+                    try {
+                        //传入构造函数的参数类型，注意对应的bean类需要有对应的构造函数
+                        con = clz.getConstructor(paramTypes);
+                        //传入具体参数
+                        obj = con.newInstance(paramValues);
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    } catch (IllegalArgumentException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    //构造器参数为空则直接使用无参构造函数实例化，对应的类需要实现无参构造器
+                    obj = clz.newInstance();
                 }
             } else {
-                //构造器参数为空则直接使用无参构造函数实例化，对应的类需要实现无参构造器
                 obj = clz.newInstance();
             }
         } catch (InstantiationException e) {
@@ -195,63 +199,65 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
         System.out.println("----------------------------");
 
         PropertyValues propertyValues = bd.getPropertyValues();
-        if (!propertyValues.isEmpty()) {
-            for (int i = 0; i < propertyValues.size(); i++) {
-                PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
-                String pType = propertyValue.getType();
-                String pName = propertyValue.getName();
-                Object pValue = propertyValue.getValue();
-                boolean isRef = propertyValue.getIsRef();
-                Class<?>[] paramTypes = new Class<?>[1];
-                Object[] paramValues = new Object[1];
+        if (propertyValues != null) {
+            if (!propertyValues.isEmpty()) {
+                for (int i = 0; i < propertyValues.size(); i++) {
+                    PropertyValue propertyValue = propertyValues.getPropertyValueList().get(i);
+                    String pType = propertyValue.getType();
+                    String pName = propertyValue.getName();
+                    Object pValue = propertyValue.getValue();
+                    boolean isRef = propertyValue.getIsRef();
+                    Class<?>[] paramTypes = new Class<?>[1];
+                    Object[] paramValues = new Object[1];
 
-                //不是引用，只是普通数据类型
-                if (!isRef) {
-                    if ("String".equals(pType) || "java.lang.String".equals(pType)) {
-                        paramTypes[0] = String.class;
-                    } else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
-                        paramTypes[0] = Integer.class;
-                    } else if ("int".equals(pType)) {
-                        paramTypes[0] = int.class;
+                    //不是引用，只是普通数据类型
+                    if (!isRef) {
+                        if ("String".equals(pType) || "java.lang.String".equals(pType)) {
+                            paramTypes[0] = String.class;
+                        } else if ("Integer".equals(pType) || "java.lang.Integer".equals(pType)) {
+                            paramTypes[0] = Integer.class;
+                        } else if ("int".equals(pType)) {
+                            paramTypes[0] = int.class;
+                        } else {
+                            paramTypes[0] = String.class;
+                        }
+                        //不是引用存放实际的值
+                        paramValues[0] = pValue;
                     } else {
-                        paramTypes[0] = String.class;
+                        //是引用，创建独立的bean
+                        try {
+                            paramTypes[0] = Class.forName(pType);
+                        } catch (ClassNotFoundException e) {
+                            e.printStackTrace();
+                        }
+                        //调用getBean创建ref的bean实例
+                        try {
+                            //是引用，存放对应的bean实例
+                            paramValues[0] = getBean((String)pValue);
+                        } catch (BeansException e) {
+                            e.printStackTrace();
+                        }
                     }
-                    //不是引用存放实际的值
-                    paramValues[0] = pValue;
-                } else {
-                    //是引用，创建独立的bean
-                    try {
-                        paramTypes[0] = Class.forName(pType);
-                    } catch (ClassNotFoundException e) {
-                        e.printStackTrace();
-                    }
-                    //调用getBean创建ref的bean实例
-                    try {
-                        //是引用，存放对应的bean实例
-                        paramValues[0] = getBean((String)pValue);
-                    } catch (BeansException e) {
-                        e.printStackTrace();
-                    }
-                }
 
-                //按照setXxxx规范查找setter方法，调用setter方法设置属性
-                String methodName = "set" + pName.substring(0, 1).toUpperCase() + pName.substring(1);
-                Method method = null;
-                try {
-                    //通过相应的类文件拿到对应的setter方法
-                    method = clz.getMethod(methodName, paramTypes);
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                } catch (SecurityException e) {
-                    e.printStackTrace();
-                }
-                try {
-                    //调用方法，并将参数paramValues传入
-                    method.invoke(obj, paramValues);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
+                    //按照setXxxx规范查找setter方法，调用setter方法设置属性
+                    String methodName = "set" + pName.substring(0, 1).toUpperCase() + pName.substring(1);
+                    Method method = null;
+                    try {
+                        //通过相应的类文件拿到对应的setter方法
+                        method = clz.getMethod(methodName, paramTypes);
+                    } catch (NoSuchMethodException e) {
+                        e.printStackTrace();
+                    } catch (SecurityException e) {
+                        e.printStackTrace();
+                    }
+                    try {
+                        //调用方法，并将参数paramValues传入
+                        method.invoke(obj, paramValues);
+                    } catch (IllegalAccessException e) {
+                        e.printStackTrace();
+                    } catch (InvocationTargetException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }

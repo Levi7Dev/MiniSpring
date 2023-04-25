@@ -49,11 +49,11 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
         }
     }
 
-    //对外暴露的方法，让外部程序从容器中获取Bean实例，会逐步演化
-    public Object getBean(String beanName) throws BeansException {
-        //根据bean的名字获取实例
-        return this.beanFactory.getBean(beanName);
-    }
+//    //对外暴露的方法，让外部程序从容器中获取Bean实例，会逐步演化
+//    public Object getBean(String beanName) throws BeansException {
+//        //根据bean的名字获取实例
+//        return this.beanFactory.getBean(beanName);
+//    }
 
     @Override
     public ConfigurableListableBeanFactory getBeanFactory() throws IllegalStateException {

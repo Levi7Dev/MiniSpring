@@ -24,6 +24,8 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
         /***
          * WebApplicationContext继承了ApplicationContext，ApplicationContext继承了ListableBeanFactory，
          * ListableBeanFactory中包含getBeanDefinitionNames方法，用于获取所有BeanDefinitionNames
+         * 这里存在一个类型转换异常，需修改DefaultListableBeanFactory中的getBeanDefinitionNames方法
+         * 需要在toArray中传入：toArray(new String[this.beanDefinitionNames.size()])
          */
         String[] controllerNames = this.wac.getBeanDefinitionNames();
         //扫描WAC中存放的所有bean，其中loadBeanDefinitions方法将beanID就是全类名，这样拿到beanName就可以用于实例化bean

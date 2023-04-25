@@ -12,6 +12,16 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
 
     ConfigurableListableBeanFactory parentBeanFactory;
 
+
+    @Override
+    public Object getBean(String beanName) throws BeansException {
+        Object result = super.getBean(beanName);
+        if (result == null) {
+            result = this.parentBeanFactory.getBean(beanName);
+        }
+        return result;
+    }
+
     @Override
     public int getBeanDefinitionCount() {
         //AbstractBeanFactory类中成员变量
@@ -21,7 +31,7 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
     //直接拿到父类AbstractBeanFactory中变量beanDefinitionNames，也就是整个容器中的bean定义信息
     @Override
     public String[] getBeanDefinitionNames() {
-        return (String[]) this.beanDefinitionNames.toArray();
+        return (String[]) this.beanDefinitionNames.toArray(new String[this.beanDefinitionNames.size()]);
     }
 
     @Override
