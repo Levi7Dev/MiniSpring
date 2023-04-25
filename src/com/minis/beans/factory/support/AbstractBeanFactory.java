@@ -133,7 +133,7 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             //System.out.println("-------:" + clz.toString());
             //处理构造器参数
             ConstructorArgumentValues constructorArgumentValues = bd.getConstructorArgumentValues();
-            if (!constructorArgumentValues.isEmpty()) {
+            if (! constructorArgumentValues.isEmpty()) {
                 Class<?>[] paramTypes = new Class<?>[constructorArgumentValues.getArgumentCount()];
                 Object[] paramValues = new Object[constructorArgumentValues.getArgumentCount()];
                 for (int i = 0; i < constructorArgumentValues.getArgumentCount(); i++) {

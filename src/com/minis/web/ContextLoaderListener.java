@@ -50,7 +50,10 @@ public class ContextLoaderListener implements ServletContextListener {
         //传入的就是配置文件的名字，由于AnnotationConfigWebApplicationContext继承了ClassPathXmlApplicationContext类
         //所以在new AnnotationConfigWebApplicationContext(sContextLocation)的时候，会调用ClassPathXmlApplicationContext中的构造函数
         //然后解析xml文件，注册bean的定义，再调用refresh方法，对所有bean进行实例化和初始化，并将applicationContext.xml中定义的bean存放在容器中
-        WebApplicationContext wac = new AnnotationConfigWebApplicationContext(sContextLocation);
+
+        //WebApplicationContext wac = new AnnotationConfigWebApplicationContext(sContextLocation);
+
+        WebApplicationContext wac = new XmlWebApplicationContext(sContextLocation);
         wac.setServletContext(servletContext);
         this.webApplicationContext = wac;
         //tomcat创建的全局ServletContext

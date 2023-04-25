@@ -10,12 +10,15 @@ import java.util.Map;
 
 public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFactory implements ConfigurableListableBeanFactory {
 
+    ConfigurableListableBeanFactory parentBeanFactory;
+
     @Override
     public int getBeanDefinitionCount() {
         //AbstractBeanFactory类中成员变量
         return this.beanDefinitionMap.size();
     }
 
+    //直接拿到父类AbstractBeanFactory中变量beanDefinitionNames，也就是整个容器中的bean定义信息
     @Override
     public String[] getBeanDefinitionNames() {
         return (String[]) this.beanDefinitionNames.toArray();
@@ -51,6 +54,10 @@ public class DefaultListableBeanFactory extends AbstractAutowireCapableBeanFacto
             result.put(beanName, (T)beanInstance);
         }
         return result;
+    }
+
+    public void setParent(ConfigurableListableBeanFactory beanFactory) {
+        this.parentBeanFactory = beanFactory;
     }
 }
 

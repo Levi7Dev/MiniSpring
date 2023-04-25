@@ -62,25 +62,25 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
 
     //父类抽象方法的实现
     @Override
-    void registerListeners() {
+    protected void registerListeners() {
         ApplicationListener listener = new ApplicationListener();
         this.getApplicationEventPublisher().addApplicationListener(listener);
     }
 
     @Override
-    void initApplicationEventPublisher() {
+    protected void initApplicationEventPublisher() {
         ApplicationEventPublisher aep = new SimpleApplicationEventPublisher();
         this.setApplicationEventPublisher(aep);
     }
 
     //refresh函数中调用
     @Override
-    void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
+    protected void postProcessBeanFactory(ConfigurableListableBeanFactory bf) {
 
     }
 
     @Override
-    void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
+    protected void registerBeanPostProcessors(ConfigurableListableBeanFactory bf) {
         //为了获取spring中管理bean，会new ClassPathXmlApplicationContext()，然后再创建BeanFactory，
         //需要把这个工厂注入到注解处理器中，bean定义信息也是在同一个bean工厂中
         //达到了同一个bean工厂，既有bean的定义信息，也为该工厂注册了注解处理器，
@@ -97,7 +97,7 @@ public class ClassPathXmlApplicationContext extends AbstractApplicationContext {
     }
 
     @Override
-    void finishRefresh() {
+    protected void finishRefresh() {
         publishEvent(new ContextRefreshEvent("Context Refreshed..."));
     }
 
