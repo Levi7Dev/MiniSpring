@@ -1,5 +1,6 @@
 package com.minis.web;
 
+import com.minis.beans.BeansException;
 import com.minis.web.servlet.*;
 
 import javax.servlet.ServletConfig;
@@ -89,10 +90,14 @@ public class DispatcherServlet extends HttpServlet {
         this.webApplicationContext =
                 new AnnotationConfigWebApplicationContext(sContextConfigLocation, this.parentApplicationContext);
 
-        Refresh();
+        try {
+            Refresh();
+        } catch (BeansException e) {
+            e.printStackTrace();
+        }
     }
 
-    protected void Refresh() {
+    protected void Refresh() throws BeansException {
         //initController();
         //initMapping();
         //获取方法和对应的对象
@@ -105,7 +110,7 @@ public class DispatcherServlet extends HttpServlet {
         this.handlerMapping = new RequestMappingHandlerMapping(webApplicationContext);
     }
 
-    protected void initHandlerAdapters(WebApplicationContext webApplicationContext) {
+    protected void initHandlerAdapters(WebApplicationContext webApplicationContext) throws BeansException {
         this.handlerAdapter = new RequestMappingHandlerAdapter(webApplicationContext);
     }
 
