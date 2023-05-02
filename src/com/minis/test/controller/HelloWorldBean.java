@@ -1,7 +1,11 @@
-package com.minis.test;
+package com.minis.test.controller;
 
 
+import com.minis.test.entity.User;
 import com.minis.web.RequestMapping;
+import com.minis.web.bind.annotation.ResponseBody;
+
+import java.util.Date;
 
 public class HelloWorldBean {
 
@@ -18,5 +22,14 @@ public class HelloWorldBean {
     @RequestMapping("/post")
     public String doPost() {
         return "hello world for doPost!";
+    }
+
+
+    @RequestMapping("/test7")
+    @ResponseBody
+    public User doTest7(User user) {
+        user.setName(user.getName() + "---");
+        user.setBirthday(new Date());
+        return user;
     }
 }

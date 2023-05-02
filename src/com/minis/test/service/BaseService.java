@@ -1,8 +1,8 @@
-package com.minis.test;
+package com.minis.test.service;
 
 
 import com.minis.beans.factory.annotation.Autowired;
-import com.minis.test.BaseBaseService;
+import com.minis.test.service.BaseBaseService;
 
 public class BaseService {
 

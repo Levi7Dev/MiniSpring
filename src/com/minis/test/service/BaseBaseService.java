@@ -1,6 +1,6 @@
-package com.minis.test;
+package com.minis.test.service;
 
-import com.minis.test.AServiceImpl;
+import com.minis.test.service.AServiceImpl;
 
 public class BaseBaseService {
     private AServiceImpl as;
