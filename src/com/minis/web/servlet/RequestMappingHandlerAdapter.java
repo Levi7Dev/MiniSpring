@@ -36,8 +36,8 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter{
 
     //真正执行需要调用该方法
     @Override
-    public void handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        handleInternal(request, response, (HandlerMethod) handler);
+    public ModelAndView handle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        return handleInternal(request, response, (HandlerMethod) handler);
     }
 
     private ModelAndView handleInternal(HttpServletRequest request, HttpServletResponse response, HandlerMethod handler) {
@@ -71,7 +71,7 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter{
         Class<?> returnType = invocableMethod.getReturnType();
 
         ModelAndView mav = null;
-        if (invocableMethod.isAnnotationPresent(ResponseBody.class)) { //ResponseBody
+        if (invocableMethod.isAnnotationPresent(ResponseBody.class)) {
             this.messageConverter.write(returnObj, response);
         } else {
             if (returnObj instanceof ModelAndView) {

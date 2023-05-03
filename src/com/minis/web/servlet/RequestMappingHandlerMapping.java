@@ -12,6 +12,9 @@ public class RequestMappingHandlerMapping implements HandlerMapping {
     WebApplicationContext wac;
     private final MappingRegistry mappingRegistry = new MappingRegistry();
 
+    public RequestMappingHandlerMapping() {
+    }
+
     public RequestMappingHandlerMapping(WebApplicationContext wac) {
         this.wac = wac;
         initMapping();

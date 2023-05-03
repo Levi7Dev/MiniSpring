@@ -3,7 +3,7 @@ package com.minis.jdbc.core;
 import javax.sql.DataSource;
 import java.sql.*;
 
-public abstract class JdbcTemplate {
+public class JdbcTemplate {
 
     private DataSource dataSource;
 
