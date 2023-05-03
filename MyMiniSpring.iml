@@ -26,5 +26,6 @@
     <orderEntry type="library" exported="" name="dom4j-1.6.1" level="project" />
     <orderEntry type="library" name="Java EE 6-Java EE 6" level="project" />
     <orderEntry type="library" name="dom4j-1.6.1 (2)" level="project" />
+    <orderEntry type="library" name="mysql-connector-j-8.0.32" level="project" />
   </component>
 </module>
