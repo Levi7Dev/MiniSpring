@@ -10,6 +10,7 @@ import java.util.Date;
 public class HelloWorldBean {
 
     @RequestMapping("/test")
+    @ResponseBody
     public String doTest() {
         return "hello world for doTest!";
     }
