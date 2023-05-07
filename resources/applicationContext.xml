@@ -31,6 +31,11 @@
 	</bean>
 
 
+	<bean id="sqlSessionFactory" class="com.minis.batis.DefaultSqlSessionFactory" init-method="init">
+		<property type="String" name="mapperLocations" value="mapper"></property>
+	</bean>
+
+
 	<bean id="handlerAdapter" class="com.minis.web.servlet.RequestMappingHandlerAdapter">
 		<property type="com.minis.web.HttpMessageConverter" name="messageConverter" ref="messageConverter"/>
 		<property type="com.minis.web.WebBindingInitializer" name="webBindingInitializer" ref="webBindingInitializer"/>
