@@ -24,11 +24,13 @@ public class DefaultSqlSessionFactory implements SqlSessionFactory {
     public DefaultSqlSessionFactory() {
     }
 
+    //配置文件中配置了该方法为初始化方法，在bean初始化的时候会执行
     public void init() {
         scanLocation(this.mapperLocations);
     }
 
     private void scanLocation(String location) {
+        //获取资源目录下的文件
         String sLocationPath = this.getClass().getClassLoader().getResource("").getPath() + location;
         File dir = new File(sLocationPath);
         for (File file : dir.listFiles()) {

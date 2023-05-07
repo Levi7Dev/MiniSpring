@@ -75,7 +75,6 @@ public class UserService {
         );
     }
 
-
     public User getUserById(int userId) {
         String sqlId = "com.minis.test.entity.User.getUserInfo";
         SqlSession sqlSession = sqlSessionFactory.openSession();
