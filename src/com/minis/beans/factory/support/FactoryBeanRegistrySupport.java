@@ -38,6 +38,7 @@ public abstract class FactoryBeanRegistrySupport extends DefaultSingletonBeanReg
         if(!(beanInstance instanceof FactoryBean)){
             return beanInstance;
         }
+        //beanInstance已经是ProxyFactoryBean类型，此处向上转型了
         FactoryBean<?> factory = (FactoryBean<?>) beanInstance;
         return getObjectFromFactoryBean(factory,beanName);
     }

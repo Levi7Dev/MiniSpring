@@ -17,6 +17,10 @@ public class JdkDynamicAopProxy implements AopProxy, InvocationHandler {
         return obj;
     }
 
+    /***
+     * 当调用代理对象的某个方法时，代理对象会将调用转发给关联的InvocationHandler实现。
+     * 然后，InvocationHandler的invoke方法会被调用
+     */
     @Override
     public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
         if (method.getName().equals("doAction")) {

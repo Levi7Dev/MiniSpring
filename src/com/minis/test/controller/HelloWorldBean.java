@@ -14,6 +14,11 @@ import java.util.Date;
 
 public class HelloWorldBean {
 
+    /***
+     * action在xml文件中对应的类为FactoryBean，
+     * bean实例化时，在getBean方法中进行了判断，如果为FactoryBean的实例，则调用方法，获取该类下的target成员变量
+     * 实例化后已经是被代理的对象，当调用内部的方法时会自动调用动态代理的invoke方法
+     */
     @Autowired
     private IAction action;
 

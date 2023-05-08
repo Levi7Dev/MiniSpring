@@ -56,6 +56,7 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
     }
 
     protected Object getProxy(AopProxy aopProxy) {//生成代理对象
+        //最终会调用JdkDynamicAopProxy中的getProxy方法，返回一个代理对象
         return aopProxy.getProxy();
     }
 
