@@ -59,11 +59,18 @@ public class RequestMappingHandlerAdapter implements HandlerAdapter{
         int i = 0;
         //对调用方法里的每一个参数，处理绑定
         for (Parameter methodParameter : methodParameters) {
-            Object methodParamObj = methodParameter.getType().newInstance();
-            //给这个参数创建WebDataBinder
-            WebDataBinder wdb = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
-            wdb.bind(request);
-            methodParamObjs[i] = methodParamObj;
+            Class<?> type = methodParameter.getType();
+            if (HttpServletRequest.class != type && HttpServletResponse.class != type) {
+                Object methodParamObj = methodParameter.getType().newInstance();
+                //给这个参数创建WebDataBinder
+                WebDataBinder wdb = binderFactory.createBinder(request, methodParamObj, methodParameter.getName());
+                wdb.bind(request);
+                methodParamObjs[i] = methodParamObj;
+            } else if (HttpServletRequest.class == type) {
+                methodParamObjs[i] = request;
+            } else if (HttpServletResponse.class == type) {
+                methodParamObjs[i] = response;
+            }
             i++;
         }
         Method invocableMethod = handlerMethod.getMethod();

@@ -51,4 +51,10 @@
 		<property type="String" name="dateFormat" value="yyyy/MM/dd"/>
 		<property type="String" name="decimalFormat" value="###.##"/>
 	</bean>
+
+
+	<bean id="realaction" class="com.minis.test.service.Action1" />
+	<bean id="action" class="com.minis.aop.ProxyFactoryBean" >
+		<property type="java.lang.Object" name="target" ref="realaction"/>
+	</bean>
 </beans>

@@ -4,6 +4,7 @@ import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConfigurableBeanFactory;
 import com.minis.beans.factory.config.ConstructorArgumentValue;
@@ -21,7 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 /***
  * 代码复用，解耦
  */
-public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry implements ConfigurableBeanFactory,BeanDefinitionRegistry {
+public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport implements ConfigurableBeanFactory,BeanDefinitionRegistry {
 
     protected Map<String, BeanDefinition> beanDefinitionMap = new ConcurrentHashMap<>();
     protected List<String> beanDefinitionNames = new ArrayList<>();
@@ -56,22 +57,32 @@ public abstract class AbstractBeanFactory extends DefaultSingletonBeanRegistry i
             //毛坯实例都没有则创建并注册
             if (singleton == null) {
                 BeanDefinition beanDefinition = beanDefinitionMap.get(beanName);
-                //调用createBean方法，进而调用doCreateBean方法和handleProperties方法，从而达到将依赖的bean全部创建出来并实现属性注入
-                singleton = createBean(beanDefinition);
-                this.registerSingleton(beanName ,singleton);
+                if (beanDefinition != null) {
+                    //调用createBean方法，进而调用doCreateBean方法和handleProperties方法，从而达到将依赖的bean全部创建出来并实现属性注入
+                    singleton = createBean(beanDefinition);
+                    this.registerSingleton(beanName ,singleton);
 
-                //beanpostprocessor，前者在类初始化前调用，后者在类初始化之后调用。
-                //step 1 : postProcessBeforeInitialization
-                applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                    //beanpostprocessor，前者在类初始化前调用，后者在类初始化之后调用。
+                    //step 1 : postProcessBeforeInitialization
+                    applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
-                //step 2 : init-method
-                if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
-                    invokeInitMethod(beanDefinition, singleton);
+                    //step 2 : init-method
+                    if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
+                        invokeInitMethod(beanDefinition, singleton);
+                    }
+
+                    //step 3 : postProcessAfterInitialization
+                    applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+                } else {
+                    return  null;
                 }
-
-                //step 3 : postProcessAfterInitialization
-                applyBeanPostProcessorsAfterInitialization(singleton, beanName);
             }
+        }
+        //aop
+        // 通过 AbstractBeanFactory 获取 Bean 的时候，对 FactoryBean 进行了特殊处理，
+        // 获取到的已经不是 FactoryBean 本身了，而是它内部包含的那一个对象。
+        if (singleton instanceof FactoryBean) {
+            return this.getObjectForBeanInstance(singleton, beanName);
         }
 
         if (singleton == null) {
