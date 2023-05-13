@@ -26,6 +26,7 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
 
     private synchronized void initializeAdvisor() {
         Object advice = null;
+        //方法拦截器
         MethodInterceptor mi = null;
         try {
             //beanFactory在AbstractBeanFactory类中的getBean方法set进来，不会出现空指针异常
@@ -82,8 +83,9 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
         this.target = target;
     }
 
+    //获取内部对象target，并将target生成代理对象返回
     @Override
-    public Object getObject() throws Exception {//获取内部对象
+    public Object getObject() throws Exception {
         initializeAdvisor();
         return getSingletonInstance();
     }

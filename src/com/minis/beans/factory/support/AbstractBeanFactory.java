@@ -63,7 +63,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                     singleton = createBean(beanDefinition);
                     this.registerSingleton(beanName ,singleton);
 
-                    //ProxyFactoryBean实现了BeanFactoryAware接口，注入的时候把beanFactory set进去
+                    //aop：ProxyFactoryBean实现了BeanFactoryAware接口，注入的时候把beanFactory set进去
                     if (singleton instanceof BeanFactoryAware) {
                         ((BeanFactoryAware) singleton).setBeanFactory(this);
                     }

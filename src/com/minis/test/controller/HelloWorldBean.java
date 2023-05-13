@@ -24,6 +24,7 @@ public class HelloWorldBean {
 
     @RequestMapping("/aop")
     public void doTestAop(HttpServletRequest request, HttpServletResponse response) {
+        //action已经是内部被代理的对象，当调用具体方法是会自动调用JdkDynamicAopProxy中的invoke方法，然后在内部调用具体的方法
         action.doAction();
         String str = "test aop, hello world!";
         try {
