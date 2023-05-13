@@ -4,6 +4,7 @@ import com.minis.beans.BeansException;
 import com.minis.beans.PropertyValue;
 import com.minis.beans.PropertyValues;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.BeanFactoryAware;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.beans.factory.config.BeanDefinition;
 import com.minis.beans.factory.config.ConfigurableBeanFactory;
@@ -61,6 +62,11 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
                     //调用createBean方法，进而调用doCreateBean方法和handleProperties方法，从而达到将依赖的bean全部创建出来并实现属性注入
                     singleton = createBean(beanDefinition);
                     this.registerSingleton(beanName ,singleton);
+
+                    //ProxyFactoryBean实现了BeanFactoryAware接口，注入的时候把beanFactory set进去
+                    if (singleton instanceof BeanFactoryAware) {
+                        ((BeanFactoryAware) singleton).setBeanFactory(this);
+                    }
 
                     //beanpostprocessor，前者在类初始化前调用，后者在类初始化之后调用。
                     //step 1 : postProcessBeforeInitialization

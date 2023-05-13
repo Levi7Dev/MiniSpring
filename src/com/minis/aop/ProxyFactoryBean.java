@@ -2,10 +2,11 @@ package com.minis.aop;
 
 import com.minis.beans.BeansException;
 import com.minis.beans.factory.BeanFactory;
+import com.minis.beans.factory.BeanFactoryAware;
 import com.minis.beans.factory.FactoryBean;
 import com.minis.util.ClassUtils;
 
-public class ProxyFactoryBean implements FactoryBean<Object> {
+public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
     private AopProxyFactory aopProxyFactory;
     private String[] interceptorNames;
     private String targetName;
@@ -13,6 +14,8 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
     private ClassLoader proxyClassLoader = ClassUtils.getDefaultClassLoader();
     private Object singletonInstance;
 
+    //beanFactory没有获取具体实例，需要在AbstractBeanFactory类中的getBean方法set进来
+    //具体实现方式是本类实现BeanFactoryAware接口
     private BeanFactory beanFactory;
     private String interceptorName;
     private Advisor advisor;
@@ -25,6 +28,7 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
         Object advice = null;
         MethodInterceptor mi = null;
         try {
+            //beanFactory在AbstractBeanFactory类中的getBean方法set进来，不会出现空指针异常
             advice = this.beanFactory.getBean(this.interceptorName);
         } catch (BeansException e) {
             e.printStackTrace();
@@ -38,6 +42,16 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
         }
         advisor = new DefaultAdvisor();
         advisor.setMethodInterceptor(mi);
+    }
+
+    //set注入
+    public void setInterceptorName(String interceptorName) {
+        this.interceptorName = interceptorName;
+    }
+
+    @Override
+    public void setBeanFactory(BeanFactory beanFactory) {
+        this.beanFactory = beanFactory;
     }
 
     public void setAopProxyFactory(AopProxyFactory aopProxyFactory) {
@@ -70,6 +84,7 @@ public class ProxyFactoryBean implements FactoryBean<Object> {
 
     @Override
     public Object getObject() throws Exception {//获取内部对象
+        initializeAdvisor();
         return getSingletonInstance();
     }
 
