@@ -55,8 +55,10 @@
 
 	<bean id="realaction" class="com.minis.test.service.Action1"/>
 	<bena id="beforeAdvice" class="com.minis.test.service.MyBeforeAdvice" />
+	<!--advisor将advice（增强逻辑）与mappedName（切入点）关联在一起-->
 	<bean id="advisor" class="com.minis.aop.NameMatchMethodPointcutAdvisor">
 		<property type="com.minis.aop.Advice" name="advice" ref="beforeAdvice"/>
+		<!--方法名匹配规则，*代表通配符，把value注入到mappedName，在调用具体的方法时会判断方法名字是否与mappedName匹配-->
 		<property type="String" name="mappedName" value="do*"/>
 	</bean>
 	<bean id="action" class="com.minis.aop.ProxyFactoryBean">

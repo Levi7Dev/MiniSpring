@@ -36,15 +36,6 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
             e.printStackTrace();
         }
         this.advisor = (PointcutAdvisor) advice;
-//        if (advice instanceof BeforeAdvice) {
-//            mi = new MethodBeforeAdviceInterceptor((MethodBeforeAdvice) advice);
-//        } else if (advice instanceof AfterAdvice) {
-//            mi = new AfterReturningAdviceInterceptor((AfterReturningAdvice) advice);
-//        } else if (advice instanceof MethodInterceptor) {
-//            mi = (MethodInterceptor) advice;
-//        }
-//        advisor = new DefaultAdvisor();
-//        advisor.setMethodInterceptor(mi);
     }
 
     //set注入

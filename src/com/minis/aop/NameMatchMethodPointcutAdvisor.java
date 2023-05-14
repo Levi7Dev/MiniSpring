@@ -47,6 +47,7 @@ public class NameMatchMethodPointcutAdvisor implements PointcutAdvisor {
         return pointcut;
     }
 
+    //set注入
     public void setMappedName(String mappedName) {
         this.mappedName = mappedName;
         this.pointcut.setMappedName(this.mappedName);
