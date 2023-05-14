@@ -45,6 +45,8 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             beanProcessor.setBeanFactory(this);
             //调用AutowiredAnnotationBeanPostProcessor中的方法（谁实现BeanPostProcessor接口调用谁）
+            //web模块的beanProcessor来自AnnotationConfigWebApplicationContext，根据不同的beanProcessor调用不同实现类中的方法
+            //aop会调用BeanNameAutoProxyCreator类中的方法，为该bean生成ProxyFactoryBean，实现批量的代理符合匹配规则的类
             result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
                 return result;
