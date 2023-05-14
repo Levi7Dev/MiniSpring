@@ -70,7 +70,7 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
                     //beanpostprocessor，前者在类初始化前调用，后者在类初始化之后调用。
                     //step 1 : postProcessBeforeInitialization
-                    applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
+                    singleton = applyBeanPostProcessorsBeforeInitialization(singleton, beanName);
 
                     //step 2 : init-method
                     if (beanDefinition.getInitMethodName() != null && !beanDefinition.getInitMethodName().equals("")) {
@@ -79,6 +79,9 @@ public abstract class AbstractBeanFactory extends FactoryBeanRegistrySupport imp
 
                     //step 3 : postProcessAfterInitialization
                     applyBeanPostProcessorsAfterInitialization(singleton, beanName);
+
+                    this.removeSingleton(beanName);
+                    this.registerBean(beanName, singleton);
                 } else {
                     return  null;
                 }

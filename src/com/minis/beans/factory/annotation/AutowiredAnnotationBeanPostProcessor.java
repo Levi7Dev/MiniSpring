@@ -16,7 +16,7 @@ public class AutowiredAnnotationBeanPostProcessor implements BeanPostProcessor {
     private BeanFactory beanFactory;
 
     @Override
-    public Object postProcessorBeforeInitialization(Object bean, String beanName) throws BeansException {
+    public Object postProcessBeforeInitialization(Object bean, String beanName) throws BeansException {
         //获取该bean下的所有被注解的成员变量
         Object result = bean;
         Class<?> clazz = bean.getClass();

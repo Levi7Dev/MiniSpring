@@ -22,11 +22,27 @@ public class HelloWorldBean {
     @Autowired
     private IAction action;
 
-    @RequestMapping("/aop")
+    @Autowired
+    private IAction action2;
+
+    @RequestMapping("/aop1")
     public void doTestAop(HttpServletRequest request, HttpServletResponse response) {
         //action已经是内部被代理的对象，当调用具体方法是会自动调用JdkDynamicAopProxy中的invoke方法，然后在内部调用具体的方法
         action.doAction();
         action.doSomething();
+        String str = "test aop, hello world!";
+        try {
+            response.getWriter().write(str);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @RequestMapping("/aop")
+    public void doTestAop2(HttpServletRequest request, HttpServletResponse response) {
+        //action已经是内部被代理的对象，当调用具体方法是会自动调用JdkDynamicAopProxy中的invoke方法，然后在内部调用具体的方法
+        action2.doAction();
+        action2.doSomething();
         String str = "test aop, hello world!";
         try {
             response.getWriter().write(str);

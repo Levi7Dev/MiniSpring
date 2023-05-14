@@ -45,7 +45,7 @@ public abstract class AbstractAutowireCapableBeanFactory extends AbstractBeanFac
         for (BeanPostProcessor beanProcessor : getBeanPostProcessors()) {
             beanProcessor.setBeanFactory(this);
             //调用AutowiredAnnotationBeanPostProcessor中的方法（谁实现BeanPostProcessor接口调用谁）
-            result = beanProcessor.postProcessorBeforeInitialization(result, beanName);
+            result = beanProcessor.postProcessBeforeInitialization(result, beanName);
             if (result == null) {
                 return result;
             }
