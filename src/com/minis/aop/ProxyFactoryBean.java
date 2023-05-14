@@ -18,7 +18,7 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
     //具体实现方式是本类实现BeanFactoryAware接口
     private BeanFactory beanFactory;
     private String interceptorName;
-    private Advisor advisor;
+    private PointcutAdvisor advisor;
 
     public ProxyFactoryBean() {
         this.aopProxyFactory = new DefaultAopProxyFactory();
@@ -30,19 +30,21 @@ public class ProxyFactoryBean implements FactoryBean<Object>, BeanFactoryAware {
         MethodInterceptor mi = null;
         try {
             //beanFactory在AbstractBeanFactory类中的getBean方法set进来，不会出现空指针异常
+            //获取到具体增强的bean，包含增强的方法
             advice = this.beanFactory.getBean(this.interceptorName);
         } catch (BeansException e) {
             e.printStackTrace();
         }
-        if (advice instanceof BeforeAdvice) {
-            mi = new MethodBeforeAdviceInterceptor((MethodBeforeAdvice) advice);
-        } else if (advice instanceof AfterAdvice) {
-            mi = new AfterReturningAdviceInterceptor((AfterReturningAdvice) advice);
-        } else if (advice instanceof MethodInterceptor) {
-            mi = (MethodInterceptor) advice;
-        }
-        advisor = new DefaultAdvisor();
-        advisor.setMethodInterceptor(mi);
+        this.advisor = (PointcutAdvisor) advice;
+//        if (advice instanceof BeforeAdvice) {
+//            mi = new MethodBeforeAdviceInterceptor((MethodBeforeAdvice) advice);
+//        } else if (advice instanceof AfterAdvice) {
+//            mi = new AfterReturningAdviceInterceptor((AfterReturningAdvice) advice);
+//        } else if (advice instanceof MethodInterceptor) {
+//            mi = (MethodInterceptor) advice;
+//        }
+//        advisor = new DefaultAdvisor();
+//        advisor.setMethodInterceptor(mi);
     }
 
     //set注入
